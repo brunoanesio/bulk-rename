@@ -18,7 +18,10 @@ click.rich_click.USE_RICH_MARKUP = True
     show_default=True,
     help="Increases zero padding, with a padding of 3 files will be 001.",
 )
-def bulk_rename(directory, pattern, prefix, padding):
+@click.option(
+    "--dry-run", "-d", is_flag=True, help="Perform a dry run without renaming files."
+)
+def bulk_rename(directory, pattern, prefix, padding, dry_run):
     """
     Bulk rename files in a directory with a given pattern, prefix and padding.
 
@@ -53,10 +56,10 @@ def bulk_rename(directory, pattern, prefix, padding):
             old_file = os.path.join(directory, file_name)
             new_file = os.path.join(directory, new_file_name)
 
-            os.rename(old_file, new_file)
+            if not dry_run:
+                os.rename(old_file, new_file)
 
             click.echo(f"Renamed: {file_name} -> {new_file_name}")
-            click.echo("Files renamed successfully.")
 
 
 if __name__ == "__main__":
