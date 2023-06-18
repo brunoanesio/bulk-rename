@@ -2,6 +2,8 @@
 
 Simple bulk rename tool, rename files in a directory with a given pattern, prefix and padding.
 
+By default, rename is incremental, so if you have a file image.png, it will rename 1.png, 2.png and so on, a prefix and padding can be specified.
+
 Rename is made using regex, also possible to sort and limit files to rename.
 
 Written in python with [rich_click](https://github.com/ewels/rich-click/).
