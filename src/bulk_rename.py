@@ -60,6 +60,7 @@ def bulk_rename(directory, pattern, prefix, padding, dry_run, limit, sort_by):
 
     """
     file_list = os.listdir(os.path.expanduser(directory))
+
     if sort_by == "alphabetical":
         file_list.sort()
     elif sort_by == "creation":
@@ -79,10 +80,11 @@ def bulk_rename(directory, pattern, prefix, padding, dry_run, limit, sort_by):
             old_file = os.path.join(directory, file_name)
             new_file = os.path.join(directory, new_file_name)
 
-            if not dry_run:
+            if dry_run:
+                click.echo(f"Will rename: {file_name} -> {new_file_name}")
+            else:
                 os.rename(old_file, new_file)
-
-            click.echo(f"Renamed: {file_name} -> {new_file_name}")
+                click.echo(f"Renamed: {file_name} -> {new_file_name}")
 
 
 if __name__ == "__main__":
