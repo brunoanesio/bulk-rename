@@ -1,2 +1,4 @@
 .venv
 rename_test
+src/__pycache__
+tests/__pycache__
