@@ -21,7 +21,18 @@ click.rich_click.USE_RICH_MARKUP = True
 @click.option(
     "--dry-run", "-d", is_flag=True, help="Perform a dry run without renaming files."
 )
-def bulk_rename(directory, pattern, prefix, padding, dry_run):
+@click.option(
+    "--limit", "-l", type=int, help="Limit the number of files to be renamed."
+)
+@click.option(
+    "--sort-by",
+    "-s",
+    type=click.Choice(["alphabetical", "creation", "size"]),
+    default="alphabetical",
+    help="Specify the sorting criterion.",
+    show_default=True,
+)
+def bulk_rename(directory, pattern, prefix, padding, dry_run, limit, sort_by):
     """
     Bulk rename files in a directory with a given pattern, prefix and padding.
 
@@ -37,15 +48,27 @@ def bulk_rename(directory, pattern, prefix, padding, dry_run):
 
     [i]Rename all files with png and jpg extension[/]
 
-    [b]bulk_rename path/to/dir/ ".*.(png|jpg)"[/]
+    [blue]bulk_rename path/to/dir/ ".*.(png|jpg)"[/]
 
     [i]Rename all files that contain "image", add prefix "Wallpaper" with 2 padding[/]
 
-    [b]bulk_rename path/to/dir/ "image*" "Wallpaper" -p 2[/]
+    [blue]bulk_rename path/to/dir/ "image*" "Wallpaper" -p 2[/]
+
+    [i]Rename all files limited to 10, sorted by size[/]
+
+    [blue]bulk_rename path/to/dir/ "*" -l 10 -s size[/]
 
     """
     file_list = os.listdir(os.path.expanduser(directory))
-    file_list.sort()
+    if sort_by == "alphabetical":
+        file_list.sort()
+    elif sort_by == "creation":
+        file_list.sort(key=lambda x: os.path.getctime(os.path.join(directory, x)))
+    elif sort_by == "size":
+        file_list.sort(key=lambda x: os.path.getsize(os.path.join(directory, x)))
+
+    if limit is not None:
+        file_list = file_list[:limit]
 
     for i, file_name in enumerate(file_list):
         item_path = os.path.join(directory, file_name)
