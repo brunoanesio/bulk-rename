@@ -32,6 +32,7 @@ click.rich_click.USE_RICH_MARKUP = True
     help="Specify the sorting criterion.",
     show_default=True,
 )
+@click.version_option("0.1", prog_name="bulk_rename")
 def bulk_rename(directory, pattern, prefix, padding, dry_run, limit, sort_by):
     """
     Bulk rename files in a directory with a given pattern, prefix and padding.
