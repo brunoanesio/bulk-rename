@@ -4,3 +4,4 @@ src/__pycache__
 tests/__pycache__
 dist
 src/bulk_rename.egg-info
+src/BulkRenamerPy.egg-info
