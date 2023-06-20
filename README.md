@@ -26,7 +26,7 @@ pip install BulkRenamerPy
 
 **Rename all files limited to 10, sorted by size**
 
-`bulk_rename path/to/dir/ "*" -l 10 -s size`
+`bulk_rename path/to/dir/ ".*" -l 10 -s size`
 
 **More info using --help**
 
