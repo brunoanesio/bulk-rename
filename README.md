@@ -1,4 +1,4 @@
-# Bulk Rename
+# BulkRenamerPy
 
 Simple bulk rename tool, rename files in a directory with a given pattern, prefix and padding.
 
@@ -7,6 +7,12 @@ By default, rename is incremental, so if you have a file image.png, it will rena
 Rename is made using regex, also possible to sort and limit files to rename.
 
 Written in python with [rich_click](https://github.com/ewels/rich-click/).
+
+## Installation
+
+```bash
+pip install BulkRenamerPy
+```
 
 ## Example Usage
 
