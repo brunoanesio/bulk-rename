@@ -2,3 +2,5 @@
 rename_test
 src/__pycache__
 tests/__pycache__
+dist
+src/bulk_rename.egg-info
