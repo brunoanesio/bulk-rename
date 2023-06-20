@@ -11,18 +11,18 @@ keywords = ["bulk rename", "rename", "rename files"]
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: OS Independent",
 ]
 dependencies = [
-    "click",
-    "markdown",
-    "mdurl",
-    "packaging",
-    "Pygments",
-    "rich",
-    "rich-click",
+  "click",
+  "markdown",
+  "mdurl",
+  "packaging",
+  "Pygments",
+  "rich",
+  "rich-click",
 ]
 
 [project.optional-dependencies]
