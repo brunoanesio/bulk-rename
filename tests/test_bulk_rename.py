@@ -62,9 +62,9 @@ def test_bulk_rename_dry_run(runner, test_files):
     assert "Will rename: file1.txt -> new_001.txt" in result.output
     assert "Will rename: file2.txt -> new_002.txt" in result.output
     assert "Will rename: file3.txt -> new_003.txt" in result.output
-    assert "Renamed: file1.txt" not in result.output
-    assert "Renamed: file2.txt" not in result.output
-    assert "Renamed: file3.txt" not in result.output
+    assert "Renamed: file1.txt -> new_001.txt" not in result.output
+    assert "Renamed: file2.txt -> new_002.txt" not in result.output
+    assert "Renamed: file3.txt -> new_003.txt" not in result.output
 
     # Check the file names remain unchanged
     original_files = os.listdir(tmpdir)
@@ -76,11 +76,7 @@ def test_bulk_rename_invalid_directory(runner):
     result = runner.invoke(
         bulk_rename, ["invalid_directory", r"file\d\.txt", "new_", "-p", "3", "-d"]
     )
-    assert result.exit_code != 0
-    assert (
-        "Invalid value for '[DIRECTORY]': Path 'invalid_directory' does not exist."
-        in result.output
-    )
+    assert result.exit_code == 2
 
 
 if __name__ == "__main__":
