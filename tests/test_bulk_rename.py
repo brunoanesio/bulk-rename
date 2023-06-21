@@ -1,7 +1,9 @@
 import os
 import tempfile
+
 import pytest
 from click.testing import CliRunner
+
 from src.bulk_rename import bulk_rename
 
 
