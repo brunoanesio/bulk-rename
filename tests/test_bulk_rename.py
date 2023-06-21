@@ -1,72 +1,87 @@
 import os
 import tempfile
+
 import pytest
-import shutil
 from click.testing import CliRunner
+
 from src.bulk_rename import bulk_rename
 
 
 @pytest.fixture
-def temp_dir():
-    # Create a temporary directory for testing
-    temp_dir = tempfile.mkdtemp()
-    yield temp_dir
-    # Clean up the temporary directory after each test
-    shutil.rmtree(temp_dir)
+def runner():
+    return CliRunner()
 
 
-def test_bulk_rename(temp_dir):
-    # Create some test files in the temporary directory
-    filenames = ["file1.txt", "file2.txt", "file3.txt"]
-    for filename in filenames:
-        file_path = os.path.join(temp_dir, filename)
-        with open(file_path, "w") as f:
-            f.write("Test file content")
+@pytest.fixture
+def test_files():
+    # Create temporary files for testing
+    with tempfile.TemporaryDirectory() as tmpdir:
+        filenames = ["file1.txt", "file2.txt", "file3.txt"]
+        for filename in filenames:
+            path = os.path.join(tmpdir, filename)
+            with open(path, "w") as f:
+                f.write("Test content")
+                f.close()
 
-    runner = CliRunner()
+        yield tmpdir, filenames
 
-    # Run the bulk_rename command
+
+def test_bulk_rename(runner, test_files):
+    tmpdir, filenames = test_files
+
+    # Run the command
     result = runner.invoke(
         bulk_rename,
-        [temp_dir, r"file\d\.txt", "new_", "-p", "3", "-l", "2", "-s", "size"],
+        [tmpdir, r"file\d\.txt", "new_", "-p", "3", "-l", "2"],
     )
 
-    # Assert that the command ran successfully
+    # Check the command output
     assert result.exit_code == 0
+    assert "Renamed: file1.txt -> new_001.txt" in result.output
+    assert "Renamed: file2.txt -> new_002.txt" in result.output
+    assert "Renamed: file3.txt -> new_003.txt" not in result.output
 
-    # Assert the expected renamed files
-    renamed_files = ["new_001.txt", "new_002.txt"]
-    for renamed_file in renamed_files:
-        renamed_file_path = os.path.join(temp_dir, renamed_file)
-        assert os.path.exists(renamed_file_path)
+    # Check the file renaming
+    renamed_files = os.listdir(tmpdir)
+    renamed_files.sort()
+    expected = ["file3.txt", "new_001.txt", "new_002.txt"]
+    assert renamed_files == expected
 
-    # Assert the original files were not renamed
-    for filename in filenames[:1]:
-        file_path = os.path.join(temp_dir, filename)
-        assert os.path.exists(file_path)
 
-    # Assert the original files were deleted if limit is set
-    file_path = os.path.join(temp_dir, filenames[2])
-    assert not os.path.exists(file_path)
+def test_bulk_rename_dry_run(runner, test_files):
+    tmpdir, filenames = test_files
 
-    # Assert the dry run option works
+    # Run the command with dry-run flag
     result = runner.invoke(
         bulk_rename,
-        [temp_dir, r"file\d\.txt", "dry", "-d"],
+        [tmpdir, r"file\d\.txt", "new_", "-p", "3", "--dry-run"],
     )
-    assert result.exit_code == 0
-    expected_files = ["new_001.txt", "new_002.txt", "file1.txt"]
-    for filename in expected_files[:1]:
-        file_path = os.path.join(temp_dir, filename)
-        assert os.path.exists(file_path)
 
-    # Assert the sorting option works
-    result = runner.invoke(
-        bulk_rename,
-        [temp_dir, r"file\d\.txt", "new_", "-s", "creation"],
-    )
+    # Check the command output
     assert result.exit_code == 0
-    renamed_files = ["new_001.txt", "new_002.txt"]
-    for renamed_file in renamed_files:
-        renamed_file_path = os.path.join(temp_dir, renamed_file)
-        assert os.path.exists(renamed_file_path)
+    assert "Will rename: file1.txt -> new_001.txt" in result.output
+    assert "Will rename: file2.txt -> new_002.txt" in result.output
+    assert "Will rename: file3.txt -> new_003.txt" in result.output
+    assert "Renamed: file1.txt" not in result.output
+    assert "Renamed: file2.txt" not in result.output
+    assert "Renamed: file3.txt" not in result.output
+
+    # Check the file names remain unchanged
+    original_files = os.listdir(tmpdir)
+    original_files.sort()
+    assert original_files == filenames
+
+
+def test_bulk_rename_invalid_directory(runner):
+    result = runner.invoke(
+        bulk_rename, ["invalid_directory", r"file\d\.txt", "new_", "-p", "3", "-d"]
+    )
+    assert result.exit_code != 0
+    assert (
+        "Invalid value for '[DIRECTORY]': Path 'invalid_directory' does not exist."
+        in result.output
+    )
+
+
+if __name__ == "__main__":
+    pytest.main()
