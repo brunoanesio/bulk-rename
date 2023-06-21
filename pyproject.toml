@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "BulkRenamerPy"
-version = "0.1.3"
+version = "0.1.5"
 authors = [{ name = "Bruno Anesio", email = "brunohanesio@gmail.com" }]
 description = "A simple tool to bulk rename files in a directory"
 keywords = ["bulk rename", "rename", "rename files"]
